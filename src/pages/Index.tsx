@@ -4,7 +4,7 @@ import { BottomNav } from '@/components/BottomNav';
 import { useNavigate } from 'react-router-dom';
 import {
   SendHorizontal, ArrowDownToLine, Plus, Phone,
-  Eye, EyeOff, LogOut, Settings, ChevronRight,
+  Eye, EyeOff, LogOut, Settings, ChevronRight, Shield, UserCheck,
 } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -92,6 +92,25 @@ export default function HomePage() {
           ))}
         </div>
       </div>
+
+      {/* Role-based Dashboard Link */}
+      {(profile?.role === 'admin' || profile?.role === 'agent') && (
+        <div className="mt-4 px-5">
+          <button
+            onClick={() => navigate(profile.role === 'admin' ? '/admin' : '/agent')}
+            className="flex w-full items-center justify-between rounded-2xl bg-gradient-to-r from-primary to-primary/80 p-4 text-primary-foreground shadow-elevated"
+          >
+            <div className="flex items-center gap-3">
+              {profile.role === 'admin' ? <Shield className="h-5 w-5" /> : <UserCheck className="h-5 w-5" />}
+              <div className="text-left">
+                <p className="font-semibold">{profile.role === 'admin' ? 'Admin Dashboard' : 'Agent Dashboard'}</p>
+                <p className="text-xs opacity-80">{profile.role === 'admin' ? 'Manage users & agents' : 'Process withdrawals'}</p>
+              </div>
+            </div>
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        </div>
+      )}
 
       {/* Recent Transactions */}
       <div className="mt-6 px-5">

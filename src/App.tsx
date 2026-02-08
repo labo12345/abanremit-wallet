@@ -13,6 +13,8 @@ import Deposit from "./pages/Deposit";
 import Transactions from "./pages/Transactions";
 import Airtime from "./pages/Airtime";
 import Settings from "./pages/Settings";
+import AdminDashboard from "./pages/AdminDashboard";
+import AgentDashboard from "./pages/AgentDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -33,6 +35,8 @@ const App = () => (
             <Route path="/transactions" element={<ProtectedRoute><Transactions /></ProtectedRoute>} />
             <Route path="/airtime" element={<ProtectedRoute><Airtime /></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+            <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+            <Route path="/agent" element={<ProtectedRoute><AgentDashboard /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
