@@ -1,9 +1,11 @@
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
+import { useUserRole } from '@/hooks/useUserRole';
 
 export function useAgentProfile() {
   const { profile } = useAuth();
+  const { data: role } = useUserRole();
   return useQuery({
     queryKey: ['agent-profile', profile?.id],
     queryFn: async () => {
@@ -16,7 +18,7 @@ export function useAgentProfile() {
       if (error) throw error;
       return data;
     },
-    enabled: !!profile && profile.role === 'agent',
+    enabled: !!profile && role === 'agent',
   });
 }
 

@@ -4,7 +4,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
-import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { UserRoute, AgentRoute, AdminRoute } from "@/components/RoleBasedRoute";
+import { RoleRedirect } from "@/components/RoleRedirect";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import SendMoney from "./pages/SendMoney";
@@ -28,15 +29,25 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/auth" element={<Auth />} />
-            <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
-            <Route path="/send" element={<ProtectedRoute><SendMoney /></ProtectedRoute>} />
-            <Route path="/withdraw" element={<ProtectedRoute><Withdraw /></ProtectedRoute>} />
-            <Route path="/deposit" element={<ProtectedRoute><Deposit /></ProtectedRoute>} />
-            <Route path="/transactions" element={<ProtectedRoute><Transactions /></ProtectedRoute>} />
-            <Route path="/airtime" element={<ProtectedRoute><Airtime /></ProtectedRoute>} />
-            <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-            <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
-            <Route path="/agent" element={<ProtectedRoute><AgentDashboard /></ProtectedRoute>} />
+            
+            {/* Role-based redirect at root */}
+            <Route path="/" element={<RoleRedirect />} />
+            
+            {/* User routes - NOT accessible by admins */}
+            <Route path="/home" element={<UserRoute><Index /></UserRoute>} />
+            <Route path="/send" element={<UserRoute><SendMoney /></UserRoute>} />
+            <Route path="/withdraw" element={<UserRoute><Withdraw /></UserRoute>} />
+            <Route path="/deposit" element={<UserRoute><Deposit /></UserRoute>} />
+            <Route path="/transactions" element={<UserRoute><Transactions /></UserRoute>} />
+            <Route path="/airtime" element={<UserRoute><Airtime /></UserRoute>} />
+            <Route path="/settings" element={<UserRoute><Settings /></UserRoute>} />
+            
+            {/* Agent route - only agents */}
+            <Route path="/agent" element={<AgentRoute><AgentDashboard /></AgentRoute>} />
+            
+            {/* Admin route - ONLY admins */}
+            <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+            
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

@@ -3,7 +3,7 @@ import { Home, SendHorizontal, ArrowDownToLine, Plus, Clock } from 'lucide-react
 import { cn } from '@/lib/utils';
 
 const navItems = [
-  { path: '/', icon: Home, label: 'Home' },
+  { path: '/home', icon: Home, label: 'Home' },
   { path: '/send', icon: SendHorizontal, label: 'Send' },
   { path: '/withdraw', icon: ArrowDownToLine, label: 'Withdraw' },
   { path: '/deposit', icon: Plus, label: 'Add Funds' },

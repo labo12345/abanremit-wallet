@@ -19,6 +19,7 @@ interface AuthContextType {
   signUp: (email: string, password: string, fullName: string, phoneNumber: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
+  refetchProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -30,12 +31,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const fetchProfile = async (userId: string) => {
-    const { data } = await supabase
+    // Fetch profile data
+    const { data: profileData } = await supabase
       .from('profiles')
       .select('*')
       .eq('user_id', userId)
       .single();
-    if (data) setProfile(data as Profile);
+    
+    if (profileData) {
+      // Fetch role from user_roles table (authoritative source)
+      const { data: roleData } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', userId);
+      
+      // Determine highest privilege role
+      let role: 'user' | 'agent' | 'admin' = 'user';
+      if (roleData?.some(r => r.role === 'admin')) role = 'admin';
+      else if (roleData?.some(r => r.role === 'agent')) role = 'agent';
+      
+      setProfile({ ...profileData, role } as Profile);
+    }
+  };
+
+  const refetchProfile = async () => {
+    if (user) {
+      await fetchProfile(user.id);
+    }
   };
 
   useEffect(() => {
@@ -85,7 +107,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, profile, loading, signUp, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, session, profile, loading, signUp, signIn, signOut, refetchProfile }}>
       {children}
     </AuthContext.Provider>
   );

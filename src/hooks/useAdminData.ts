@@ -1,9 +1,10 @@
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
+import { useUserRole } from '@/hooks/useUserRole';
 
 export function useAllUsers() {
-  const { profile } = useAuth();
+  const { data: role } = useUserRole();
   return useQuery({
     queryKey: ['admin-users'],
     queryFn: async () => {
@@ -14,12 +15,12 @@ export function useAllUsers() {
       if (error) throw error;
       return data;
     },
-    enabled: profile?.role === 'admin',
+    enabled: role === 'admin',
   });
 }
 
 export function useAllAgents() {
-  const { profile } = useAuth();
+  const { data: role } = useUserRole();
   return useQuery({
     queryKey: ['admin-agents'],
     queryFn: async () => {
@@ -30,12 +31,12 @@ export function useAllAgents() {
       if (error) throw error;
       return data;
     },
-    enabled: profile?.role === 'admin',
+    enabled: role === 'admin',
   });
 }
 
 export function useAllTransactions() {
-  const { profile } = useAuth();
+  const { data: role } = useUserRole();
   return useQuery({
     queryKey: ['admin-transactions'],
     queryFn: async () => {
@@ -47,12 +48,12 @@ export function useAllTransactions() {
       if (error) throw error;
       return data;
     },
-    enabled: profile?.role === 'admin',
+    enabled: role === 'admin',
   });
 }
 
 export function useAllWithdrawals() {
-  const { profile } = useAuth();
+  const { data: role } = useUserRole();
   return useQuery({
     queryKey: ['admin-withdrawals'],
     queryFn: async () => {
@@ -63,7 +64,7 @@ export function useAllWithdrawals() {
       if (error) throw error;
       return data;
     },
-    enabled: profile?.role === 'admin',
+    enabled: role === 'admin',
   });
 }
 
@@ -84,7 +85,7 @@ export function useUpdateAgentStatus() {
 }
 
 export function useAdminStats() {
-  const { profile } = useAuth();
+  const { data: role } = useUserRole();
   return useQuery({
     queryKey: ['admin-stats'],
     queryFn: async () => {
@@ -104,6 +105,6 @@ export function useAdminStats() {
         totalVolume,
       };
     },
-    enabled: profile?.role === 'admin',
+    enabled: role === 'admin',
   });
 }
