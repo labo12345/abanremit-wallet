@@ -3,7 +3,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery } from '@tanstack/react-query';
 import { BottomNav } from '@/components/BottomNav';
-import { ArrowLeft, User, Phone, Mail, Shield, LogOut, UserCheck, Loader2 } from 'lucide-react';
+import { 
+  ArrowLeft, User, Phone, Mail, Shield, LogOut, UserCheck, Loader2,
+  CheckCircle, AlertCircle, FileText, HelpCircle, ChevronRight
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -31,6 +34,14 @@ export default function SettingsPage() {
 
   const registerAsAgent = async () => {
     if (!profile) return;
+    
+    // Check KYC
+    if (!profile.kyc_verified) {
+      toast.error('Please complete KYC verification first');
+      navigate('/kyc');
+      return;
+    }
+
     setRegistering(true);
     try {
       const { error } = await supabase.from('agents').insert({
@@ -39,8 +50,7 @@ export default function SettingsPage() {
       });
       if (error) throw error;
 
-      // Update profile role
-      await supabase.from('profiles').update({ role: 'agent' as any }).eq('id', profile.id);
+      // Add agent role
       await supabase.from('user_roles').insert({ user_id: profile.user_id, role: 'agent' as any });
 
       toast.success('Agent registration submitted! Awaiting admin approval.');
@@ -60,18 +70,46 @@ export default function SettingsPage() {
       </div>
 
       <div className="px-5 space-y-4">
+        {/* Profile Card */}
         <div className="rounded-2xl bg-card p-5 shadow-card">
           <div className="flex items-center gap-4">
             <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground">
               <User className="h-7 w-7" />
             </div>
-            <div>
+            <div className="flex-1">
               <h2 className="font-display text-lg font-bold">{profile?.full_name}</h2>
               <p className="text-sm text-muted-foreground capitalize">{profile?.role} Account</p>
             </div>
+            {profile?.kyc_verified ? (
+              <Badge variant="default" className="flex items-center gap-1">
+                <CheckCircle className="h-3 w-3" /> Verified
+              </Badge>
+            ) : (
+              <Badge variant="secondary" className="flex items-center gap-1">
+                <AlertCircle className="h-3 w-3" /> Unverified
+              </Badge>
+            )}
           </div>
         </div>
 
+        {/* KYC Banner */}
+        {!profile?.kyc_verified && (
+          <button
+            onClick={() => navigate('/kyc')}
+            className="flex w-full items-center justify-between rounded-xl bg-warning/10 border border-warning/20 p-4"
+          >
+            <div className="flex items-center gap-3">
+              <AlertCircle className="h-5 w-5 text-warning" />
+              <div className="text-left">
+                <p className="font-medium text-sm">Complete KYC Verification</p>
+                <p className="text-xs text-muted-foreground">Required for withdrawals</p>
+              </div>
+            </div>
+            <ChevronRight className="h-4 w-4 text-muted-foreground" />
+          </button>
+        )}
+
+        {/* Profile Details */}
         <div className="rounded-2xl bg-card shadow-card divide-y divide-border">
           <div className="flex items-center gap-3 p-4">
             <Phone className="h-4 w-4 text-muted-foreground" />
@@ -132,6 +170,31 @@ export default function SettingsPage() {
         )}
 
         <Separator />
+
+        {/* Legal & Support Links */}
+        <div className="rounded-2xl bg-card shadow-card divide-y divide-border">
+          <button onClick={() => navigate('/support')} className="flex items-center justify-between w-full p-4">
+            <div className="flex items-center gap-3">
+              <HelpCircle className="h-4 w-4 text-muted-foreground" />
+              <span className="text-sm">Help & Support</span>
+            </div>
+            <ChevronRight className="h-4 w-4 text-muted-foreground" />
+          </button>
+          <button onClick={() => navigate('/privacy')} className="flex items-center justify-between w-full p-4">
+            <div className="flex items-center gap-3">
+              <Shield className="h-4 w-4 text-muted-foreground" />
+              <span className="text-sm">Privacy Policy</span>
+            </div>
+            <ChevronRight className="h-4 w-4 text-muted-foreground" />
+          </button>
+          <button onClick={() => navigate('/terms')} className="flex items-center justify-between w-full p-4">
+            <div className="flex items-center gap-3">
+              <FileText className="h-4 w-4 text-muted-foreground" />
+              <span className="text-sm">Terms & Conditions</span>
+            </div>
+            <ChevronRight className="h-4 w-4 text-muted-foreground" />
+          </button>
+        </div>
 
         <Button onClick={signOut} variant="destructive" className="w-full" size="lg">
           <LogOut className="mr-2 h-4 w-4" />

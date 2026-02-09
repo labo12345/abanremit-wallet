@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import {
   Users, UserCheck, ArrowDownToLine, TrendingUp,
-  Search, Shield, Loader2, Check, X, RefreshCw, LogOut,
+  Search, Shield, Loader2, Check, X, RefreshCw, LogOut, Settings,
 } from 'lucide-react';
 
 function StatCard({ icon: Icon, label, value, color }: { icon: any; label: string; value: string | number; color: string }) {
@@ -75,6 +75,18 @@ export default function AdminDashboard() {
       </div>
 
       <div className="px-5 -mt-4">
+        {/* Settings Link */}
+        <button
+          onClick={() => navigate('/admin/settings')}
+          className="mb-4 flex w-full items-center justify-between rounded-xl bg-card p-3 shadow-card"
+        >
+          <div className="flex items-center gap-2">
+            <Settings className="h-4 w-4 text-muted-foreground" />
+            <span className="text-sm font-medium">System Settings</span>
+          </div>
+          <span className="text-xs text-muted-foreground">Limits, Deposits, Health →</span>
+        </button>
+
         {/* Stats Grid */}
         <div className="grid grid-cols-2 gap-3">
           <StatCard icon={Users} label="Total Users" value={stats?.totalUsers ?? 0} color="bg-primary" />

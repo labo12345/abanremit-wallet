@@ -1,1 +1,13 @@
 project_id = "sqruqjoznspqyjyckpgt"
+
+[functions.webhook-deposit]
+verify_jwt = false
+
+[functions.webhook-airtime]
+verify_jwt = false
+
+[functions.health-check]
+verify_jwt = false
+
+[functions.send-notification]
+verify_jwt = false
