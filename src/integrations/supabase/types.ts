@@ -55,24 +55,42 @@ export type Database = {
       audit_logs: {
         Row: {
           action: string
+          balance_after: number | null
+          balance_before: number | null
           created_at: string
           details: Json | null
+          entity_id: string | null
+          entity_type: string | null
           id: string
+          ip_address: string | null
           profile_id: string | null
+          user_agent: string | null
         }
         Insert: {
           action: string
+          balance_after?: number | null
+          balance_before?: number | null
           created_at?: string
           details?: Json | null
+          entity_id?: string | null
+          entity_type?: string | null
           id?: string
+          ip_address?: string | null
           profile_id?: string | null
+          user_agent?: string | null
         }
         Update: {
           action?: string
+          balance_after?: number | null
+          balance_before?: number | null
           created_at?: string
           details?: Json | null
+          entity_id?: string | null
+          entity_type?: string | null
           id?: string
+          ip_address?: string | null
           profile_id?: string | null
+          user_agent?: string | null
         }
         Relationships: [
           {
@@ -123,13 +141,167 @@ export type Database = {
           },
         ]
       }
+      daily_transaction_totals: {
+        Row: {
+          created_at: string
+          id: string
+          profile_id: string
+          total_sent: number
+          total_withdrawn: number
+          transaction_count: number
+          transaction_date: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          profile_id: string
+          total_sent?: number
+          total_withdrawn?: number
+          transaction_count?: number
+          transaction_date?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          profile_id?: string
+          total_sent?: number
+          total_withdrawn?: number
+          transaction_count?: number
+          transaction_date?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "daily_transaction_totals_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      deposits: {
+        Row: {
+          amount: number
+          confirmed_at: string | null
+          confirmed_by: string | null
+          created_at: string
+          external_reference: string | null
+          id: string
+          metadata: Json | null
+          profile_id: string
+          provider: string
+          reference_code: string
+          status: string
+        }
+        Insert: {
+          amount: number
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          created_at?: string
+          external_reference?: string | null
+          id?: string
+          metadata?: Json | null
+          profile_id: string
+          provider?: string
+          reference_code?: string
+          status?: string
+        }
+        Update: {
+          amount?: number
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          created_at?: string
+          external_reference?: string | null
+          id?: string
+          metadata?: Json | null
+          profile_id?: string
+          provider?: string
+          reference_code?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deposits_confirmed_by_fkey"
+            columns: ["confirmed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deposits_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notification_queue: {
+        Row: {
+          channel: string
+          created_at: string
+          error_message: string | null
+          id: string
+          payload: Json
+          profile_id: string | null
+          recipient: string
+          retry_count: number
+          sent_at: string | null
+          status: string
+          template_name: string
+        }
+        Insert: {
+          channel: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          payload?: Json
+          profile_id?: string | null
+          recipient: string
+          retry_count?: number
+          sent_at?: string | null
+          status?: string
+          template_name: string
+        }
+        Update: {
+          channel?: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          payload?: Json
+          profile_id?: string | null
+          recipient?: string
+          retry_count?: number
+          sent_at?: string | null
+          status?: string
+          template_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_queue_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
           email: string | null
           full_name: string
           id: string
+          kyc_consent_at: string | null
+          kyc_verified: boolean
+          kyc_verified_at: string | null
+          national_id: string | null
           phone_number: string
+          phone_verified: boolean
+          phone_verified_at: string | null
           pin_hash: string
           role: Database["public"]["Enums"]["app_role"]
           updated_at: string
@@ -140,7 +312,13 @@ export type Database = {
           email?: string | null
           full_name: string
           id?: string
+          kyc_consent_at?: string | null
+          kyc_verified?: boolean
+          kyc_verified_at?: string | null
+          national_id?: string | null
           phone_number: string
+          phone_verified?: boolean
+          phone_verified_at?: string | null
           pin_hash?: string
           role?: Database["public"]["Enums"]["app_role"]
           updated_at?: string
@@ -151,11 +329,86 @@ export type Database = {
           email?: string | null
           full_name?: string
           id?: string
+          kyc_consent_at?: string | null
+          kyc_verified?: boolean
+          kyc_verified_at?: string | null
+          national_id?: string | null
           phone_number?: string
+          phone_verified?: boolean
+          phone_verified_at?: string | null
           pin_hash?: string
           role?: Database["public"]["Enums"]["app_role"]
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      system_status: {
+        Row: {
+          component: string
+          error_message: string | null
+          id: string
+          last_check_at: string
+          metadata: Json | null
+          response_time_ms: number | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          component: string
+          error_message?: string | null
+          id?: string
+          last_check_at?: string
+          metadata?: Json | null
+          response_time_ms?: number | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          component?: string
+          error_message?: string | null
+          id?: string
+          last_check_at?: string
+          metadata?: Json | null
+          response_time_ms?: number | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      transaction_limits: {
+        Row: {
+          created_at: string
+          daily_limit: number | null
+          description: string | null
+          id: string
+          is_active: boolean
+          limit_type: string
+          max_amount: number
+          min_amount: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          daily_limit?: number | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          limit_type: string
+          max_amount?: number
+          min_amount?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          daily_limit?: number | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          limit_type?: string
+          max_amount?: number
+          min_amount?: number
+          updated_at?: string
         }
         Relationships: []
       }
@@ -224,6 +477,45 @@ export type Database = {
         }
         Relationships: []
       }
+      user_sessions: {
+        Row: {
+          created_at: string
+          device_info: string | null
+          expires_at: string
+          id: string
+          ip_address: string | null
+          is_active: boolean
+          last_active_at: string
+          session_token: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          device_info?: string | null
+          expires_at: string
+          id?: string
+          ip_address?: string | null
+          is_active?: boolean
+          last_active_at?: string
+          session_token: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          device_info?: string | null
+          expires_at?: string
+          id?: string
+          ip_address?: string | null
+          is_active?: boolean
+          last_active_at?: string
+          session_token?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       wallets: {
         Row: {
           balance: number
@@ -258,6 +550,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      webhook_events: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          event_type: string
+          external_reference: string
+          id: string
+          payload: Json
+          processed_at: string | null
+          provider: string
+          retry_count: number
+          signature: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          event_type: string
+          external_reference: string
+          id?: string
+          payload: Json
+          processed_at?: string | null
+          provider: string
+          retry_count?: number
+          signature?: string | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          event_type?: string
+          external_reference?: string
+          id?: string
+          payload?: Json
+          processed_at?: string | null
+          provider?: string
+          retry_count?: number
+          signature?: string | null
+          status?: string
+        }
+        Relationships: []
       }
       withdrawals: {
         Row: {
@@ -312,6 +646,25 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      credit_wallet: {
+        Args: {
+          p_amount: number
+          p_description?: string
+          p_profile_id: string
+          p_reference: string
+        }
+        Returns: Json
+      }
+      debit_wallet: {
+        Args: {
+          p_amount: number
+          p_description?: string
+          p_profile_id: string
+          p_reference: string
+          p_type?: string
+        }
+        Returns: Json
+      }
       get_profile_id: { Args: never; Returns: string }
       has_role: {
         Args: {
@@ -321,6 +674,16 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: never; Returns: boolean }
+      transfer_wallet: {
+        Args: {
+          p_amount: number
+          p_description?: string
+          p_from_profile_id: string
+          p_reference: string
+          p_to_profile_id: string
+        }
+        Returns: Json
+      }
     }
     Enums: {
       agent_status: "pending" | "approved" | "suspended"

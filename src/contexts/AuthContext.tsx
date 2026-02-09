@@ -9,6 +9,12 @@ interface Profile {
   phone_number: string;
   email: string | null;
   role: 'user' | 'agent' | 'admin';
+  national_id: string | null;
+  kyc_verified: boolean;
+  kyc_verified_at: string | null;
+  kyc_consent_at: string | null;
+  phone_verified: boolean;
+  phone_verified_at: string | null;
 }
 
 interface AuthContextType {
