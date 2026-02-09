@@ -6,11 +6,11 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import {
   Users, UserCheck, ArrowDownToLine, TrendingUp,
-  ArrowLeft, Search, Shield, Loader2, Check, X, RefreshCw,
+  Search, Shield, Loader2, Check, X, RefreshCw, LogOut,
 } from 'lucide-react';
 
 function StatCard({ icon: Icon, label, value, color }: { icon: any; label: string; value: string | number; color: string }) {
@@ -26,7 +26,7 @@ function StatCard({ icon: Icon, label, value, color }: { icon: any; label: strin
 }
 
 export default function AdminDashboard() {
-  const { profile, loading } = useAuth();
+  const { signOut } = useAuth();
   const navigate = useNavigate();
   const { data: stats } = useAdminStats();
   const { data: users, isLoading: usersLoading, refetch: refetchUsers } = useAllUsers();
@@ -35,14 +35,6 @@ export default function AdminDashboard() {
   const updateAgentStatus = useUpdateAgentStatus();
   const [searchTerm, setSearchTerm] = useState('');
   const [tab, setTab] = useState('overview');
-
-  if (loading) {
-    return <div className="flex min-h-screen items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
-  }
-
-  if (profile?.role !== 'admin') {
-    return <Navigate to="/" replace />;
-  }
 
   const handleAgentStatusChange = async (agentId: string, status: 'approved' | 'suspended') => {
     try {
@@ -68,14 +60,17 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-background pb-6">
       {/* Header */}
       <div className="gradient-hero px-5 pb-6 pt-6 text-primary-foreground">
-        <div className="flex items-center gap-3">
-          <button onClick={() => navigate('/')}>
-            <ArrowLeft className="h-5 w-5" />
-          </button>
-          <div>
-            <h1 className="font-display text-xl font-bold">Admin Dashboard</h1>
-            <p className="text-xs opacity-80">SACCO Management</p>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Shield className="h-6 w-6" />
+            <div>
+              <h1 className="font-display text-xl font-bold">Admin Dashboard</h1>
+              <p className="text-xs opacity-80">SACCO Management</p>
+            </div>
           </div>
+          <button onClick={signOut} className="rounded-full bg-primary-foreground/10 p-2.5 backdrop-blur-sm">
+            <LogOut className="h-4 w-4" />
+          </button>
         </div>
       </div>
 
