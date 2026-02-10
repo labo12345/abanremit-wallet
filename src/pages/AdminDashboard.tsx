@@ -75,17 +75,23 @@ export default function AdminDashboard() {
       </div>
 
       <div className="px-5 -mt-4">
-        {/* Settings Link */}
-        <button
-          onClick={() => navigate('/admin/settings')}
-          className="mb-4 flex w-full items-center justify-between rounded-xl bg-card p-3 shadow-card"
-        >
-          <div className="flex items-center gap-2">
+        {/* Admin Quick Links */}
+        <div className="grid grid-cols-2 gap-2 mb-4">
+          <button
+            onClick={() => navigate('/admin/settings')}
+            className="flex items-center gap-2 rounded-xl bg-card p-3 shadow-card"
+          >
             <Settings className="h-4 w-4 text-muted-foreground" />
             <span className="text-sm font-medium">System Settings</span>
-          </div>
-          <span className="text-xs text-muted-foreground">Limits, Deposits, Health →</span>
-        </button>
+          </button>
+          <button
+            onClick={() => navigate('/admin/charges')}
+            className="flex items-center gap-2 rounded-xl bg-card p-3 shadow-card"
+          >
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            <span className="text-sm font-medium">Charges & Revenue</span>
+          </button>
+        </div>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 gap-3">
@@ -137,6 +143,7 @@ export default function AdminDashboard() {
                         </Badge>
                       </div>
                       <p className="text-xs text-muted-foreground">{agent.profiles?.phone_number}</p>
+                      {agent.agent_code && <p className="text-[10px] font-mono text-primary">{agent.agent_code}</p>}
                       <p className="mt-1 text-xs">Wallet: KES {Number(agent.wallet_balance).toLocaleString()} • Rate: {agent.commission_rate}%</p>
                     </div>
                     <div className="flex gap-1">

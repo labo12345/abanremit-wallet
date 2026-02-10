@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       agents: {
         Row: {
+          agent_code: string | null
           commission_rate: number
           created_at: string
           id: string
@@ -25,6 +26,7 @@ export type Database = {
           wallet_balance: number
         }
         Insert: {
+          agent_code?: string | null
           commission_rate?: number
           created_at?: string
           id?: string
@@ -34,6 +36,7 @@ export type Database = {
           wallet_balance?: number
         }
         Update: {
+          agent_code?: string | null
           commission_rate?: number
           created_at?: string
           id?: string
@@ -239,6 +242,83 @@ export type Database = {
           },
         ]
       }
+      fee_change_logs: {
+        Row: {
+          changed_by: string | null
+          created_at: string
+          fee_config_id: string | null
+          id: string
+          new_values: Json | null
+          old_values: Json | null
+        }
+        Insert: {
+          changed_by?: string | null
+          created_at?: string
+          fee_config_id?: string | null
+          id?: string
+          new_values?: Json | null
+          old_values?: Json | null
+        }
+        Update: {
+          changed_by?: string | null
+          created_at?: string
+          fee_config_id?: string | null
+          id?: string
+          new_values?: Json | null
+          old_values?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fee_change_logs_fee_config_id_fkey"
+            columns: ["fee_config_id"]
+            isOneToOne: false
+            referencedRelation: "fee_configurations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fee_configurations: {
+        Row: {
+          created_at: string
+          description: string | null
+          fee_type: string
+          flat_amount: number
+          id: string
+          is_active: boolean
+          percentage_rate: number
+          tier_config: Json | null
+          transaction_type: string
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          fee_type?: string
+          flat_amount?: number
+          id?: string
+          is_active?: boolean
+          percentage_rate?: number
+          tier_config?: Json | null
+          transaction_type: string
+          updated_at?: string
+          version?: number
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          fee_type?: string
+          flat_amount?: number
+          id?: string
+          is_active?: boolean
+          percentage_rate?: number
+          tier_config?: Json | null
+          transaction_type?: string
+          updated_at?: string
+          version?: number
+        }
+        Relationships: []
+      }
       notification_queue: {
         Row: {
           channel: string
@@ -417,6 +497,7 @@ export type Database = {
           amount: number
           created_at: string
           description: string | null
+          fee_amount: number
           id: string
           recipient_name: string | null
           recipient_phone: string | null
@@ -429,6 +510,7 @@ export type Database = {
           amount: number
           created_at?: string
           description?: string | null
+          fee_amount?: number
           id?: string
           recipient_name?: string | null
           recipient_phone?: string | null
@@ -441,6 +523,7 @@ export type Database = {
           amount?: number
           created_at?: string
           description?: string | null
+          fee_amount?: number
           id?: string
           recipient_name?: string | null
           recipient_phone?: string | null
@@ -524,6 +607,7 @@ export type Database = {
           id: string
           profile_id: string
           updated_at: string
+          wallet_id: string
         }
         Insert: {
           balance?: number
@@ -532,6 +616,7 @@ export type Database = {
           id?: string
           profile_id: string
           updated_at?: string
+          wallet_id?: string
         }
         Update: {
           balance?: number
@@ -540,6 +625,7 @@ export type Database = {
           id?: string
           profile_id?: string
           updated_at?: string
+          wallet_id?: string
         }
         Relationships: [
           {

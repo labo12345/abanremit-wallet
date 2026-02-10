@@ -9,23 +9,23 @@ export default function Support() {
     {
       icon: Phone,
       title: 'Call Us',
-      description: '+254 700 000 000',
+      description: '+254 728 825 152',
       subtitle: 'Mon-Fri 8am-6pm, Sat 9am-1pm',
-      action: () => window.open('tel:+254700000000'),
+      action: () => window.open('tel:+254728825152'),
     },
     {
       icon: Mail,
       title: 'Email Support',
-      description: 'support@abanremit.com',
+      description: 'support@abancool.com',
       subtitle: 'Response within 24 hours',
-      action: () => window.open('mailto:support@abanremit.com'),
+      action: () => window.open('mailto:support@abancool.com'),
     },
     {
       icon: MessageCircle,
       title: 'WhatsApp',
-      description: '+254 700 000 001',
+      description: '+254 728 825 152',
       subtitle: 'Quick responses',
-      action: () => window.open('https://wa.me/254700000001'),
+      action: () => window.open('https://wa.me/254728825152'),
     },
   ];
 
@@ -130,7 +130,7 @@ export default function Support() {
           <p className="text-xs text-muted-foreground mb-3">
             If you suspect unauthorized activity on your account, contact us immediately to freeze your account.
           </p>
-          <Button variant="destructive" size="sm" onClick={() => window.open('tel:+254700000000')}>
+          <Button variant="destructive" size="sm" onClick={() => window.open('tel:+254728825152')}>
             Emergency Hotline
           </Button>
         </section>
