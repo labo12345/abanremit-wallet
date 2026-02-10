@@ -11,7 +11,6 @@ import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
 
 const quickActions = [
-  { label: 'Send Money', icon: SendHorizontal, path: '/send', color: 'bg-primary' },
   { label: 'Withdraw', icon: ArrowDownToLine, path: '/withdraw', color: 'bg-accent' },
   { label: 'Add Funds', icon: Plus, path: '/deposit', color: 'bg-success' },
   { label: 'Airtime', icon: Phone, path: '/airtime', color: 'bg-warning' },
@@ -75,13 +74,16 @@ export default function HomePage() {
           <p className="mt-1 font-display text-3xl font-bold">
             {showBalance ? `KES ${Number(wallet?.balance ?? 0).toLocaleString('en-KE', { minimumFractionDigits: 2 })}` : '•••••••'}
           </p>
-          <p className="mt-1 text-xs opacity-60">{wallet?.currency ?? 'KES'} Account</p>
+          {wallet?.wallet_id && (
+            <p className="mt-1 text-xs opacity-70 font-mono">{wallet.wallet_id}</p>
+          )}
+          <p className="mt-0.5 text-xs opacity-60">{wallet?.currency ?? 'KES'} Account</p>
         </div>
       </div>
 
       {/* Quick Actions */}
       <div className="px-5 -mt-4">
-        <div className="grid grid-cols-4 gap-3 rounded-2xl bg-card p-4 shadow-card">
+        <div className="grid grid-cols-3 gap-3 rounded-2xl bg-card p-4 shadow-card">
           {quickActions.map(({ label, icon: Icon, path, color }) => (
             <button key={path} onClick={() => navigate(path)} className="flex flex-col items-center gap-1.5">
               <div className={`${color} flex h-11 w-11 items-center justify-center rounded-xl text-primary-foreground`}>

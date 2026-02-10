@@ -100,6 +100,9 @@ export default function AgentDashboard() {
         </div>
 
         <div className="mt-4 rounded-xl bg-secondary/50 p-3 text-center">
+          {agentProfile?.agent_code && (
+            <p className="text-xs font-mono text-primary font-semibold mb-1">{agentProfile.agent_code}</p>
+          )}
           <p className="text-xs text-muted-foreground">Today's Earnings</p>
           <p className="font-display text-lg font-bold text-success">KES {stats.todayEarnings.toLocaleString()}</p>
           <p className="text-[10px] text-muted-foreground">Commission rate: {stats.commissionRate}%</p>

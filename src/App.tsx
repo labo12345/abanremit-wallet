@@ -16,6 +16,7 @@ import Airtime from "./pages/Airtime";
 import Settings from "./pages/Settings";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminSettings from "./pages/AdminSettings";
+import AdminCharges from "./pages/AdminCharges";
 import AgentDashboard from "./pages/AgentDashboard";
 import KYCVerification from "./pages/KYCVerification";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
@@ -45,7 +46,7 @@ const App = () => (
             
             {/* User routes - NOT accessible by admins */}
             <Route path="/home" element={<UserRoute><Index /></UserRoute>} />
-            <Route path="/send" element={<UserRoute><SendMoney /></UserRoute>} />
+            <Route path="/send" element={<AgentRoute><SendMoney /></AgentRoute>} />
             <Route path="/withdraw" element={<UserRoute><Withdraw /></UserRoute>} />
             <Route path="/deposit" element={<UserRoute><Deposit /></UserRoute>} />
             <Route path="/transactions" element={<UserRoute><Transactions /></UserRoute>} />
@@ -59,6 +60,7 @@ const App = () => (
             {/* Admin routes - ONLY admins */}
             <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
             <Route path="/admin/settings" element={<AdminRoute><AdminSettings /></AdminRoute>} />
+            <Route path="/admin/charges" element={<AdminRoute><AdminCharges /></AdminRoute>} />
             
             <Route path="*" element={<NotFound />} />
           </Routes>

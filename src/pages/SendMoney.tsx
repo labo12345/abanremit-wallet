@@ -56,55 +56,26 @@ export default function SendMoneyPage() {
 
     setSending(true);
     try {
-      // Get recipient wallet
-      const { data: recipientWallet } = await supabase
-        .from('wallets')
-        .select('id, balance')
-        .eq('profile_id', recipient.id)
-        .single();
-
-      if (!recipientWallet) { toast.error('Recipient wallet not found'); setSending(false); return; }
-
-      // Debit sender
-      const { error: debitErr } = await supabase
-        .from('wallets')
-        .update({ balance: Number(wallet.balance) - amt })
-        .eq('id', wallet.id);
-      if (debitErr) throw debitErr;
-
-      // Credit receiver
-      const { error: creditErr } = await supabase
-        .from('wallets')
-        .update({ balance: Number(recipientWallet.balance) + amt })
-        .eq('id', recipientWallet.id);
-      if (creditErr) throw creditErr;
-
-      // Record sender transaction
-      await supabase.from('transactions').insert({
-        wallet_id: wallet.id,
-        type: 'send' as any,
-        amount: amt,
-        status: 'completed' as any,
-        description: `Sent to ${recipient.full_name}`,
-        recipient_phone: recipient.phone_number,
-        recipient_name: recipient.full_name,
+      const ref = 'TXN-' + crypto.randomUUID().slice(0, 8).toUpperCase();
+      
+      // Use atomic transfer function
+      const { data: result, error } = await supabase.rpc('transfer_wallet', {
+        p_from_profile_id: profile.id,
+        p_to_profile_id: recipient.id,
+        p_amount: amt,
+        p_reference: ref,
+        p_description: `Sent to ${recipient.full_name}`,
       });
 
-      // Record receiver transaction
-      await supabase.from('transactions').insert({
-        wallet_id: recipientWallet.id,
-        type: 'receive' as any,
-        amount: amt,
-        status: 'completed' as any,
-        description: `Received from ${profile.full_name}`,
-        recipient_phone: profile.phone_number,
-        recipient_name: profile.full_name,
-      });
+      const resultObj = result as { success?: boolean; error?: string } | null;
+      if (error || !resultObj?.success) {
+        throw new Error(error?.message || resultObj?.error || 'Transfer failed');
+      }
 
       queryClient.invalidateQueries({ queryKey: ['wallet'] });
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
       toast.success(`KES ${amt.toLocaleString()} sent to ${recipient.full_name}`);
-      navigate('/');
+      navigate('/home');
     } catch (err: any) {
       toast.error(err.message || 'Transaction failed');
     } finally {

@@ -125,28 +125,23 @@ export function useConfirmWithdrawal() {
         return { action: 'rejected' };
       }
 
-      // Confirm flow: debit user wallet, credit agent, record commission
+      // Confirm flow: use atomic debit_wallet function
       const amount = Number(withdrawal.amount);
       const commission = amount * (Number(agentProfile.commission_rate) / 100);
 
-      // Get user wallet
-      const { data: userWallet, error: walletErr } = await supabase
-        .from('wallets')
-        .select('*')
-        .eq('profile_id', withdrawal.profile_id)
-        .single();
-      if (walletErr || !userWallet) throw new Error('User wallet not found');
+      // Atomically debit user wallet
+      const { data: debitResult, error: debitErr } = await supabase.rpc('debit_wallet', {
+        p_profile_id: withdrawal.profile_id,
+        p_amount: amount,
+        p_reference: withdrawal.reference_code || withdrawalId.slice(0, 8),
+        p_type: 'withdrawal',
+        p_description: 'Withdrawal via agent',
+      });
 
-      if (Number(userWallet.balance) < amount) {
-        throw new Error('User has insufficient balance');
+      const debitObj = debitResult as { success?: boolean; error?: string } | null;
+      if (debitErr || !debitObj?.success) {
+        throw new Error(debitErr?.message || debitObj?.error || 'Failed to debit wallet');
       }
-
-      // Debit user wallet
-      const { error: debitErr } = await supabase
-        .from('wallets')
-        .update({ balance: Number(userWallet.balance) - amount })
-        .eq('id', userWallet.id);
-      if (debitErr) throw debitErr;
 
       // Credit agent wallet
       const { error: creditErr } = await supabase
@@ -154,16 +149,6 @@ export function useConfirmWithdrawal() {
         .update({ wallet_balance: Number(agentProfile.wallet_balance) + amount })
         .eq('id', agentProfile.id);
       if (creditErr) throw creditErr;
-
-      // Record user transaction
-      await supabase.from('transactions').insert({
-        wallet_id: userWallet.id,
-        type: 'withdrawal' as any,
-        amount,
-        status: 'completed' as any,
-        description: `Withdrawal via agent`,
-        reference_code: withdrawal.reference_code,
-      });
 
       // Record commission
       await supabase.from('commissions').insert({
